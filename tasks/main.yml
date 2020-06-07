@@ -1,0 +1,24 @@
+---
+
+- name: Install Remote Syslog
+  apt:
+    name: rsyslog
+    state: present
+
+- name: Start and Enable the Remote Syslog Service
+  systemd:
+    name: rsyslog.service
+    state: started
+    enabled: yes
+
+- name: Template Remote Syslog Custom Forwarders
+  template:
+    src: 50-remotesyslog.conf.j2
+    dest: /etc/rsyslog.d/50-remotesyslog.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - check rsyslog
+    - restart rsyslog
+   

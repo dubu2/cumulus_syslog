@@ -1,0 +1,19 @@
+{% set node = node[ansible_hostname] %}
+#
+# Created by Ansible
+#
+# This file describes the rsyslog configuration 
+# For more information, see rsyslog
+#
+# /etc/rsyslog.d/50-remotesyslog.conf template for switches ({{ansible_hostname}})
+#
+{% if node.syslog is defined %}
+{%   set syslog = node.syslog %}
+{% elif global.syslog is defined %}
+{%   set syslog = global.syslog %}
+{% endif %}
+{% if syslog is defined %}
+{%   for item in syslog %}
+action (type="omfwd" target="{{ syslog[item]['target'] }}" device="{{ syslog[item]['device'] | default('mgmt') }}" port="{{ syslog[item]['port'] | default(514) }}" protocol="{{ syslog[item]['protocol'] | default('udp') }}")
+{%   endfor %}
+{% endif %}
